@@ -5,3 +5,4 @@ env:
 
 hello:
 	echo "ok!"
+	echo "ok!"
