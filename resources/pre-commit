@@ -1,0 +1,41 @@
+#!/bin/sh
+
+STAGED_GO_FILES=$(git diff --cached --name-only | grep ".go$")
+
+if [[ "$STAGED_GO_FILES" = "" ]]; then
+  exit 0
+fi
+
+
+# Passing tools through each file
+# Errors in this part won't stop a commit from happening
+for FILE in $STAGED_GO_FILES
+do
+    # fmt
+    go fmt $FILE
+    
+    # Only source codes should be validated
+    if ! [[ $FILE == *"_test.go" ]]; then
+      # golint
+      golint "-set_exit_status" $FILE
+      if [[ $? == 1 ]]; then
+        printf "\n[PRECOMMITHOOK] Error for golint on %s" "$FILE"
+      fi
+  
+      # go vet
+      go vet $FILE
+      if [[ $? != 0 ]]; then
+        printf "\n[PRECOMMITHOOK] Error for go vet on %s" "$FILE"
+      fi
+    fi
+done
+
+# Testing will abort a commit
+go test ./... -short
+if [[ $? != 0 ]]; then
+  printf "\n[PRECOMMITHOOK] Testing went wrong, aborting commit"
+  exit 1
+fi
+
+printf "\n [PRECOMMITHOOK] Success\n"
+exit 0
