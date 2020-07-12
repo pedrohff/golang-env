@@ -22,6 +22,8 @@ func TestFormatFilePathForWorkingDir(t *testing.T) {
 		{"error", args{filename: fileNameError}, "", true},
 		{"error1", args{filename: fileNameError}, "", true},
 		{"error1", args{filename: fileNameError}, "", true},
+		{"error1", args{filename: fileNameError}, "", true},
+
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
