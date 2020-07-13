@@ -17,7 +17,7 @@ fetch-deps:
 	go mod download
 
 build:
-	go build -o bin/myapp -ldflags="-s -w" ./cmd
+	go build -o bin/myapp -ldflags="-s -w" ./cmd/http
 
 build-on-docker: prod-env build
 
